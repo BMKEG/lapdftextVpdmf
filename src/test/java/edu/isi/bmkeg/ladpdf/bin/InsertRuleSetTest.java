@@ -5,12 +5,13 @@ import java.net.URL;
 
 import org.junit.Test;
 
+import edu.isi.bmkeg.ftd.model.FTDRuleSet;
 import edu.isi.bmkeg.lapdf.bin.AddFTD;
-import edu.isi.bmkeg.utils.Converters;
+import edu.isi.bmkeg.lapdf.controller.LapdfVpdmfEngine;
 import edu.isi.bmkeg.utils.springContext.BmkegProperties;
 import edu.isi.bmkeg.vpdmf.test.VPDMfTestCase;
 
-public class InsertFtdDataTest extends VPDMfTestCase
+public class InsertRuleSetTest extends VPDMfTestCase
 {
 
 	BmkegProperties prop;
@@ -37,13 +38,13 @@ public class InsertFtdDataTest extends VPDMfTestCase
 		inputFile = new File( u.getPath() );
 				
 		u = this.getClass().getClassLoader().getResource(
-				"rules/general.drl"
+				"rules/general.xls"
 				);
 		ruleFile = new File(u.getPath());
 		
 		u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/pbio.1000441.pdf");
 		f1 = new File(u.getPath());	
-				
+		
 	}
 
 	protected void tearDown() throws Exception
@@ -55,12 +56,13 @@ public class InsertFtdDataTest extends VPDMfTestCase
 	public void testInsertFtdData() throws Exception
 	{
 		
-		String[] args = {
-				inputFile.getPath(), this.dbUrl, this.login, this.password
-			};
-
-		AddFTD.main(args);
-
+		LapdfVpdmfEngine lapdfEng = new LapdfVpdmfEngine();
+		lapdfEng.initializeVpdmfDao(login, password, dbUrl);
+		
+		FTDRuleSet rs = lapdfEng.buildDrlRuleSet("General","Insert Notes Here", ruleFile);
+		
+		lapdfEng.getFtdDao().getCoreDao().insert(rs, "FTDRuleSet");
+		
 	}
 	
 }
