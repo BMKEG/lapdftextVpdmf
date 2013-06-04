@@ -94,7 +94,7 @@ public class AddFTD
 				LapdfDocument doc = lapdfEng.blockifyPdfFile(f);
 				lapdfEng.classifyDocument(doc, lapdfEng.getRuleFile());
 				
-				String basicText = lapdfEng.readBasicText(doc);
+				String basicText = lapdfEng.readCompleteText(doc);
 				
 				ftd.setChecksum( Converters.checksum(f) );
 				ftd.setName( f.getName() );
@@ -116,13 +116,13 @@ public class AddFTD
 					
 			LapdfDocument doc = lapdfEng.blockifyPdfFile(fOrD);
 			lapdfEng.classifyDocument(doc, lapdfEng.getRuleFile());
-			String basicText = lapdfEng.readBasicText(doc);
+			String text = lapdfEng.readCompleteText(doc);
 			
 			FTD ftd = new FTD();
 
 			ftd.setChecksum( Converters.checksum(fOrD) );
 			ftd.setName( fOrD.getName() );
-			ftd.setText( basicText );
+			ftd.setText( text );
 			ftd.setRuleSet(rs);
 		
 			doc.packForSerialization();
@@ -132,7 +132,7 @@ public class AddFTD
 			lapdfEng.addPageImagesToFtd(ftd, doc, ftd.getName(), LapdfMode.CLASSIFY);
 			lapdfEng.addSwfToFtd(fOrD, ftd);
 			
-			lapdfEng.getFtdDao().getCoreDao().insert(ftd, "FullTextDocument");
+			lapdfEng.getFtdDao().getCoreDao().insert(ftd, "FTD");
 			
 		}
 	

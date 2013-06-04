@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -145,12 +146,13 @@ public class LapdfVpdmfEngine extends LapdfEngine implements VpdmfEngine  {
 	public void addPageImagesToFtd(FTD ftd, LapdfDocument doc, String stem, int lapdfMode) throws Exception, IOException {
 		
 		List<BufferedImage> imgList = this.buildPageImageList(doc, stem, lapdfMode);
+		ftd.setPages( new ArrayList<FTDPageImage>() );
 		for( int i=0; i<imgList.size(); i++) {
 			BufferedImage img = imgList.get(i);
 			
 			FTDPageImage ftdPgImg = new FTDPageImage();
 			ftdPgImg.setPageImage(img);
-			ftdPgImg.setPageNumber(i+1);
+			ftdPgImg.setPageCode( ftd.getName() + "__" + (i+1) );
 			
 			ftd.getPages().add(ftdPgImg);
 		}

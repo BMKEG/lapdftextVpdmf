@@ -17,14 +17,10 @@ import edu.isi.bmkeg.ftd.model.FTD;
 import edu.isi.bmkeg.ftd.model.FTDRuleSet;
 import edu.isi.bmkeg.ftd.model.qo.FTDRuleSet_qo;
 import edu.isi.bmkeg.ftd.model.qo.FTD_qo;
-import edu.isi.bmkeg.lapdf.classification.ruleBased.RuleBasedChunkClassifier;
-import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
+import edu.isi.bmkeg.lapdf.controller.LapdfMode;
+import edu.isi.bmkeg.lapdf.controller.LapdfVpdmfEngine;
 import edu.isi.bmkeg.lapdf.dao.LAPDFTextDao;
-import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
-import edu.isi.bmkeg.lapdf.model.PageBlock;
-import edu.isi.bmkeg.lapdf.model.RTree.RTModelFactory;
-import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 import edu.isi.bmkeg.utils.Converters;
 import edu.isi.bmkeg.vpdmf.controller.queryEngineTools.VPDMfChangeEngineInterface;
 import edu.isi.bmkeg.vpdmf.dao.CoreDao;
@@ -44,7 +40,7 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 	@Autowired
 	private CoreDao coreDao;
 	
-	private LapdfEngine lapdfEng;
+	private LapdfVpdmfEngine lapdfEng;
 
 	// ~~~~~~~~~~~~
 	// Constructors
@@ -154,17 +150,18 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 			throw new Exception("Ambiguous Number of Rule Sets for file " 
 					+ ftdRuleSet.getFileName());
 		}
-
 		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Get the original LAPDFtext Document
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		this.lapdfEng = new LapdfEngine(ruleFile);
+		this.lapdfEng = new LapdfVpdmfEngine(ruleFile);
 		
 		LapdfDocument document = (LapdfDocument) 
 				Converters.byteArrayToObject( ftd.getLapdf() );
 		document.unpackFromSerialization();		
+		
 		this.lapdfEng.classifyDocument(document, ruleFile);
+		this.lapdfEng.addPageImagesToFtd(ftd, document, ftd.getName(), LapdfMode.CLASSIFY);
 		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Update the representation of the ruleset in the database.
@@ -187,6 +184,8 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 			document.packForSerialization();
 			ftdInDb.setLapdf( Converters.objectToByteArray(document) );
 			ftdInDb.setRuleSet( ftdRuleSet );
+			ftdInDb.setPages(ftd.getPages());
+			
 			this.coreDao.update(ftdInDb, "FTD");
 
 		} else if( l.size() == 0 ){
@@ -199,6 +198,8 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 			this.coreDao.insert(ftd, "FTD");
 			
 		}
+		
+		Converters.recursivelyDeleteFiles(tempDir);
 		
 		return ftd;
 		
