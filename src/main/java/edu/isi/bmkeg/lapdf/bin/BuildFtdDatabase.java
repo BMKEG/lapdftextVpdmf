@@ -24,7 +24,7 @@ public class BuildFtdDatabase {
 			System.exit(-1);
 		}
 		
-		URL url = ClassLoader.getSystemClassLoader().getResource("edu/isi/bmkeg/lapdf/ftd_VPDMf.zip");
+		URL url = BuildFtdDatabase.class.getClassLoader().getResource("edu/isi/bmkeg/lapdf/ftd_VPDMf.zip");
 		String buildFilePath = url.getFile();
 		File buildFile = new File( buildFilePath );
 

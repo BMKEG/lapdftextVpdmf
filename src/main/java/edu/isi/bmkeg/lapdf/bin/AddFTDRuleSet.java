@@ -12,7 +12,7 @@ public class AddFTDRuleSet
 
 	private static Logger logger = Logger.getLogger(AddFTDRuleSet.class);
 	
-	private static String USAGE = "usage: <rule-file> <name> <description> <dbName> <login> <password> ";
+	private static String USAGE = "usage: <path-to-rule-file> <dbName> <login> <password> ";
 
 	public static void main(String args[]) throws Exception	{
 
@@ -22,8 +22,8 @@ public class AddFTDRuleSet
 		}
 		
 		String ruleFileLocation = args[0];
-		String name = args[1];
-		String desc = args[2];
+		String name = ruleFileLocation;
+		String desc = "";
 		String dbName = args[3];
 		String login = args[4];
 		String password = args[5];
