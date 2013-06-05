@@ -47,7 +47,7 @@ public class BuildFtdDatabase {
 		File f = lapdfEng.getRuleFile();
 		
 		String[] args2 = {
-				f.getPath(), "general", "The default rule file",
+				f.getPath(),
 				dbName, login, password
 			};
 

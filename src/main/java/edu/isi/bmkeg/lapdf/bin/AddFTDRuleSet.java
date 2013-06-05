@@ -16,7 +16,7 @@ public class AddFTDRuleSet
 
 	public static void main(String args[]) throws Exception	{
 
-		if (args.length != 6  ) {
+		if (args.length != 4  ) {
 			System.err.println(USAGE);
 			System.exit(1);
 		}

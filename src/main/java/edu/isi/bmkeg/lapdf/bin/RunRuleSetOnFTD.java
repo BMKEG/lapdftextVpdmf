@@ -23,7 +23,7 @@ public class RunRuleSetOnFTD {
 
 	private static Logger logger = Logger.getLogger(RunRuleSetOnFTD.class);
 	
-	private static String USAGE = "usage: <ftdName> <ftdRuleSet> <dbName> <login> <password> [<rule-file>]";
+	private static String USAGE = "usage: <ftdName> <ftdRuleSet> <dbName> <login> <password>";
 
 	public static void main(String args[]) throws Exception	{
 
