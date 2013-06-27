@@ -25,7 +25,7 @@ public class QueryFtdDataTest extends VPDMfTestCase
 	
 	protected void setUp() throws Exception
 	{ 
-		super.setUp("edu/isi/bmkeg/lapdf/ftd_VPDMf.zip", false);
+		super.setUp("edu/isi/bmkeg/lapdf/ftd-mysql.zip", false);
 				
 		this.prop = new BmkegProperties(true);
 		
