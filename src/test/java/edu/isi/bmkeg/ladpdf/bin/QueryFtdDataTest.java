@@ -25,7 +25,7 @@ public class QueryFtdDataTest extends VPDMfTestCase
 	
 	protected void setUp() throws Exception
 	{ 
-		super.setUp("edu/isi/bmkeg/lapdf/ftd-mysql.zip", false);
+		super.setUp("edu/isi/bmkeg/lapdf/ftd-mysql.zip", true);
 				
 		this.prop = new BmkegProperties(true);
 		
@@ -51,7 +51,7 @@ public class QueryFtdDataTest extends VPDMfTestCase
 		lapdfEng = new LapdfVpdmfEngine();
 		lapdfEng.initializeVpdmfDao(login, password, dbUrl);
 		
-/*	FTDRuleSet rs = lapdfEng.buildDrlRuleSet("General","Insert Notes Here", ruleFile);
+		FTDRuleSet rs = lapdfEng.buildDrlRuleSet("General","Insert Notes Here", ruleFile);
 		
 		lapdfEng.getFtdDao().getCoreDao().insert(rs, "FTDRuleSet");	
 		
@@ -59,7 +59,7 @@ public class QueryFtdDataTest extends VPDMfTestCase
 				inputFile.getPath(), this.dbUrl, this.login, this.password
 			};
 
-		AddFTD.main(args);*/
+		AddFTD.main(args);
 		
 	}
 
@@ -72,7 +72,7 @@ public class QueryFtdDataTest extends VPDMfTestCase
 	public void testFindFtdData() throws Exception
 	{
 		FTD ftd = lapdfEng.getFtdDao().getCoreDao().findById(2, (new FTD()), "FTD");
-		assertEquals( "Checksum should be 2562667082", ftd.getChecksum().equals("2562667082"));
+		assertEquals( "2562667082", ftd.getChecksum());
 	}
 	
 }
