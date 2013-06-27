@@ -31,8 +31,9 @@
 									<groupId>edu.isi.bmkeg</groupId>
 									<artifactId>ftd</artifactId>
 									<type>zip</type>
+									<classifier>mysql</classifier>
 									<outputDirectory>${project.build.directory}/vpdmf/edu/isi/bmkeg/lapdf</outputDirectory>
-									<destFileName>ftd_VPDMf.zip</destFileName>
+									<destFileName>ftd_mysql.zip</destFileName>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -69,7 +70,6 @@
 			<artifactId>ftd</artifactId>
 			<type>zip</type>
 			<classifier>mysql</classifier>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
