@@ -8,6 +8,7 @@ import org.junit.Test;
 import edu.isi.bmkeg.ftd.model.FTDRuleSet;
 import edu.isi.bmkeg.lapdf.bin.AddFTD;
 import edu.isi.bmkeg.lapdf.controller.LapdfVpdmfEngine;
+import edu.isi.bmkeg.utils.Converters;
 import edu.isi.bmkeg.utils.springContext.BmkegProperties;
 import edu.isi.bmkeg.vpdmf.test.VPDMfTestCase;
 
@@ -37,11 +38,8 @@ public class InsertRuleSetTest extends VPDMfTestCase
 		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8");
 		inputFile = new File( u.getPath() );
 				
-		u = this.getClass().getClassLoader().getResource(
-				"rules/general.xls"
-				);
-		ruleFile = new File(u.getPath());
-		
+		ruleFile = Converters
+		.extractFileFromJarClasspath("rules/general.xls");
 		u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/pbio.1000441.pdf");
 		f1 = new File(u.getPath());	
 		
