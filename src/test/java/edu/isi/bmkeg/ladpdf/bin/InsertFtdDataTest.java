@@ -3,9 +3,12 @@ package edu.isi.bmkeg.ladpdf.bin;
 import java.io.File;
 import java.net.URL;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+import edu.isi.bmkeg.ftd.model.FTDRuleSet;
 import edu.isi.bmkeg.lapdf.bin.AddFTD;
+import edu.isi.bmkeg.lapdf.controller.LapdfVpdmfEngine;
 import edu.isi.bmkeg.utils.Converters;
 import edu.isi.bmkeg.utils.springContext.BmkegProperties;
 import edu.isi.bmkeg.vpdmf.test.VPDMfTestCase;
@@ -51,7 +54,7 @@ public class InsertFtdDataTest extends VPDMfTestCase
 		super.tearDown();
 	}
 
-	@Test
+	@Test @Ignore("Fails with java.lang.Exception: The appropriate rule file (general.drlhas NOT been uploaded to the database, please run AddFTDRuleSet")
 	public void testInsertFtdData() throws Exception
 	{
 		
@@ -62,5 +65,24 @@ public class InsertFtdDataTest extends VPDMfTestCase
 		AddFTD.main(args);
 
 	}
-	
+
+	@Test
+	public void testInsertFtdDataWithRules() throws Exception
+	{
+		LapdfVpdmfEngine lapdfEng = new LapdfVpdmfEngine();
+		lapdfEng.initializeVpdmfDao(login, password, dbUrl);
+		
+		FTDRuleSet rs = lapdfEng.buildDrlRuleSet("General","Insert Notes Here", ruleFile);
+		
+		lapdfEng.getFtdDao().getCoreDao().insert(rs, "FTDRuleSet");	
+
+		String[] args = {
+				inputFile.getPath(), this.dbUrl, this.login, this.password,
+				
+			};
+
+		AddFTD.main(args);
+
+	}
+
 }
