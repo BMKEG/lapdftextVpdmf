@@ -1,6 +1,7 @@
 package edu.isi.bmkeg.lapdf.bin;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +16,9 @@ import edu.isi.bmkeg.ftd.model.qo.FTDRuleSet_qo;
 import edu.isi.bmkeg.lapdf.controller.LapdfMode;
 import edu.isi.bmkeg.lapdf.controller.LapdfVpdmfEngine;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
+import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
 
 public class AddFTD
@@ -105,7 +108,11 @@ public class AddFTD
 				ftd.setLapdf( Converters.objectToByteArray( doc ) );
 				doc.unpackFromSerialization();
 				
-				lapdfEng.addPageImagesToFtd(ftd, doc, ftd.getName(), LapdfMode.CLASSIFY);
+				LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
+				StringWriter writer = new StringWriter();
+				XmlBindingTools.generateXML(xml, writer);
+				ftd.setXml( writer.toString() );
+				
 				lapdfEng.addSwfToFtd(f, ftd);
 				
 				lapdfEng.getFtdDao().getCoreDao().insert(ftd, "FTD");
@@ -129,8 +136,13 @@ public class AddFTD
 			ftd.setLapdf( Converters.objectToByteArray( doc ) );
 			doc.unpackFromSerialization();
 			
-			lapdfEng.addPageImagesToFtd(ftd, doc, ftd.getName(), LapdfMode.CLASSIFY);
 			lapdfEng.addSwfToFtd(fOrD, ftd);
+			
+			LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
+			StringWriter writer = new StringWriter();
+			XmlBindingTools.generateXML(xml, writer);
+			ftd.setXml( writer.toString() );
+
 			
 			lapdfEng.getFtdDao().getCoreDao().insert(ftd, "FTD");
 			

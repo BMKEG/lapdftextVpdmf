@@ -161,7 +161,6 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 		document.unpackFromSerialization();		
 		
 		this.lapdfEng.classifyDocument(document, ruleFile);
-		this.lapdfEng.addPageImagesToFtd(ftd, document, ftd.getName(), LapdfMode.CLASSIFY);
 		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Update the representation of the ruleset in the database.
@@ -184,7 +183,6 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 			document.packForSerialization();
 			ftdInDb.setLapdf( Converters.objectToByteArray(document) );
 			ftdInDb.setRuleSet( ftdRuleSet );
-			ftdInDb.setPages(ftd.getPages());
 			
 			this.coreDao.update(ftdInDb, "FTD");
 

@@ -13,7 +13,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import edu.isi.bmkeg.ftd.model.FTD;
-import edu.isi.bmkeg.ftd.model.FTDPageImage;
 import edu.isi.bmkeg.ftd.model.FTDRuleSet;
 import edu.isi.bmkeg.lapdf.dao.LAPDFTextDao;
 import edu.isi.bmkeg.lapdf.dao.vpdmf.LAPDFTextDaoImpl;
@@ -139,22 +138,6 @@ public class LapdfVpdmfEngine extends LapdfEngine implements VpdmfEngine  {
 			
 			ftd.setLaswf( Converters.fileContentsToBytesArray(swfFile) );
 			
-		}
-		
-	}
-	
-	public void addPageImagesToFtd(FTD ftd, LapdfDocument doc, String stem, int lapdfMode) throws Exception, IOException {
-		
-		List<BufferedImage> imgList = this.buildPageImageList(doc, stem, lapdfMode);
-		ftd.setPages( new ArrayList<FTDPageImage>() );
-		for( int i=0; i<imgList.size(); i++) {
-			BufferedImage img = imgList.get(i);
-			
-			FTDPageImage ftdPgImg = new FTDPageImage();
-			ftdPgImg.setPageImage(img);
-			ftdPgImg.setPageCode( ftd.getName() + "__" + (i+1) );
-			
-			ftd.getPages().add(ftdPgImg);
 		}
 		
 	}
