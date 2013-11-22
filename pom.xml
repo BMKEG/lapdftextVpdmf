@@ -125,7 +125,14 @@
 			<artifactId>ftd</artifactId>
 			<type>zip</type>
 			<classifier>mysql</classifier>
+			<exclusions>
+				<exclusion>
+					<artifactId>vpdmfGenerator</artifactId>
+					<groupId>edu.isi.bmkeg</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
 			<artifactId>lapdftext</artifactId>
