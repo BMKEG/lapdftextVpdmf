@@ -82,10 +82,8 @@ public class LapdfVpdmfEngine extends LapdfEngine implements VpdmfEngine  {
 	public void initializeVpdmfDao(String login, String password, String dbName) throws Exception {
 
 		CoreDao coreDao = new CoreDaoImpl();
-		coreDao.init(login, password, dbName);
-		
 		this.setFtdDao(new LAPDFTextDaoImpl(coreDao));
-		this.getFtdDao().setCoreDao(coreDao);
+		this.getFtdDao().init(login, password, dbName);
 
 	}
 	

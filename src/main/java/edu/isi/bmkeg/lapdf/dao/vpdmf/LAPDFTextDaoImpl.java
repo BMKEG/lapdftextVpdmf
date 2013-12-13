@@ -24,6 +24,7 @@ import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.utils.Converters;
 import edu.isi.bmkeg.vpdmf.controller.queryEngineTools.VPDMfChangeEngineInterface;
 import edu.isi.bmkeg.vpdmf.dao.CoreDao;
+import edu.isi.bmkeg.vpdmf.dao.CoreDaoImpl;
 import edu.isi.bmkeg.vpdmf.model.definitions.VPDMf;
 import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
 import edu.isi.bmkeg.vpdmf.model.instances.ViewBasedObjectGraph;
@@ -52,6 +53,18 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 		this.coreDao = coreDao;
 	}	
 
+	@Override
+	public void init(String login, String password, String uri)
+			throws Exception {
+		
+		if( coreDao == null ) {
+			this.coreDao = new CoreDaoImpl();
+		}
+		
+		this.coreDao.init(login, password, uri);
+		
+	}
+	
 	// ~~~~~~~~~~~~~~~~~~~
 	// Getters and Setters
 	// ~~~~~~~~~~~~~~~~~~~
@@ -62,18 +75,9 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 	public CoreDao getCoreDao() {
 		return coreDao;
 	}
-
-	private VPDMfChangeEngineInterface getCe() {
-		return coreDao.getCe();
-	}
-
-	private Map<String, ViewBasedObjectGraph> generateVbogs() throws Exception {
-		return coreDao.generateVbogs();
-	}
-
-	private VPDMf getTop() {
-		return coreDao.getTop();
-	}
+	
+	
+	
 	
 	@Override
 	public void insertLapdfDocument(LapdfDocument doc, File pdf, String text) throws Exception {
