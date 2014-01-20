@@ -1,15 +1,15 @@
 package edu.isi.bmkeg.lapdf.dao.vpdmf;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.StringWriter;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.google.common.io.Files;
 
@@ -17,17 +17,16 @@ import edu.isi.bmkeg.ftd.model.FTD;
 import edu.isi.bmkeg.ftd.model.FTDRuleSet;
 import edu.isi.bmkeg.ftd.model.qo.FTDRuleSet_qo;
 import edu.isi.bmkeg.ftd.model.qo.FTD_qo;
-import edu.isi.bmkeg.lapdf.controller.LapdfMode;
 import edu.isi.bmkeg.lapdf.controller.LapdfVpdmfEngine;
 import edu.isi.bmkeg.lapdf.dao.LAPDFTextDao;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
+import edu.isi.bmkeg.lapdf.pmcXml.PmcXmlArticle;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
-import edu.isi.bmkeg.vpdmf.controller.queryEngineTools.VPDMfChangeEngineInterface;
+import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 import edu.isi.bmkeg.vpdmf.dao.CoreDao;
 import edu.isi.bmkeg.vpdmf.dao.CoreDaoImpl;
-import edu.isi.bmkeg.vpdmf.model.definitions.VPDMf;
 import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
-import edu.isi.bmkeg.vpdmf.model.instances.ViewBasedObjectGraph;
 
 @Repository
 public class LAPDFTextDaoImpl implements LAPDFTextDao {
@@ -84,15 +83,9 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 
 		FTD ftd = new FTD();
 		
-		//ftd.setPdfFile( Converters.fileContentsToBytesArray(pdf) );
 		ftd.setChecksum( Converters.checksum(pdf) );
 		ftd.setName( pdf.getPath() );
-		ftd.setText( text );
 	
-		doc.packForSerialization();
-		ftd.setLapdf( Converters.objectToByteArray( doc ) );
-		doc.unpackFromSerialization();
-
 		getCoreDao().insert(ftd, "FTD");
 		
 	}
@@ -122,14 +115,9 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 			
 		} else if( ftdRuleSet.getFileName().endsWith("csv") )  {
 
-			FileUtils.writeStringToFile(ruleFile, ftdRuleSet.getExcelRuleFile().toString());
+			FileUtils.writeStringToFile(ruleFile, ftdRuleSet.getCsv());
 		
-		} else if( ftdRuleSet.getFileName().endsWith("xls") )  {
-
-			FileOutputStream output = new FileOutputStream(ruleFile);
-			IOUtils.write(ftdRuleSet.getExcelRuleFile(), output);
-
-		}
+		} 
 
 		if( l.size() == 1 ) {
 			
@@ -142,7 +130,8 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 			rsInDb.setRsName( ftdRuleSet.getRsName() );
 			rsInDb.setRsDescription( ftdRuleSet.getRsDescription() );
 			rsInDb.setRuleBody( ftdRuleSet.getRuleBody() );
-			rsInDb.setExcelRuleFile( ftdRuleSet.getExcelRuleFile() );
+			rsInDb.setCsv( ftdRuleSet.getCsv() );
+			rsInDb.setExcelFile( ftdRuleSet.getExcelFile() );
 			this.coreDao.update(rsInDb, "FTDRuleSet");
 			
 		} else if(l.size() == 0) {
@@ -160,9 +149,7 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		this.lapdfEng = new LapdfVpdmfEngine(ruleFile);
 		
-		LapdfDocument document = (LapdfDocument) 
-				Converters.byteArrayToObject( ftd.getLapdf() );
-		document.unpackFromSerialization();		
+		LapdfDocument document = this.lapdfEng.blockifyXml( ftd.getXml() );
 		
 		this.lapdfEng.classifyDocument(document, ruleFile);
 		
@@ -182,20 +169,34 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 					ftdInDb, 
 					"FTD");
 			
-			ftdInDb.setText( this.lapdfEng.readCompleteText(document) );
+			PmcXmlArticle pmcXml = document.convertToPmcXmlFormat();
+			StringWriter writer = new StringWriter();
+			XmlBindingTools.generateXML(pmcXml, writer);
+			ftdInDb.setPmcXml( writer.toString() );
+			
+			LapdftextXMLDocument lapdfXml = document.convertToLapdftextXmlFormat();
+			writer = new StringWriter();
+			XmlBindingTools.generateXML(lapdfXml, writer);		
+			String str = writer.toString();
+			ftdInDb.setXml( str );
 
-			document.packForSerialization();
-			ftdInDb.setLapdf( Converters.objectToByteArray(document) );
 			ftdInDb.setRuleSet( ftdRuleSet );
 			
 			this.coreDao.update(ftdInDb, "FTD");
 
 		} else if( l.size() == 0 ){
 			
-			ftd.setText( this.lapdfEng.readCompleteText(document) );
+			PmcXmlArticle pmcXml = document.convertToPmcXmlFormat();
+			StringWriter writer = new StringWriter();
+			XmlBindingTools.generateXML(pmcXml, writer);
+			ftd.setPmcXml( writer.toString() );
 
-			document.packForSerialization();
-			ftd.setLapdf( Converters.objectToByteArray(document) );
+			LapdftextXMLDocument lapdfXml = document.convertToLapdftextXmlFormat();
+			writer = new StringWriter();
+			XmlBindingTools.generateXML(lapdfXml, writer);		
+			String str = writer.toString();
+			ftd.setXml( str );
+			
 			ftd.setRuleSet( ftdRuleSet );
 			this.coreDao.insert(ftd, "FTD");
 			

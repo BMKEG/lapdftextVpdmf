@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import edu.isi.bmkeg.ftd.model.FTD;
@@ -155,9 +156,13 @@ public class LapdfVpdmfEngine extends LapdfEngine implements VpdmfEngine  {
 			
 			rs.setRuleBody( TextUtils.readFileToString(ruleFile) );
 		
+		} else if( ruleFile.getName().endsWith(".csv") ) {
+		
+			rs.setCsv(FileUtils.readFileToString(ruleFile));
+			
 		} else if( ruleFile.getName().endsWith(".xls") ) {
 		
-			rs.setExcelRuleFile(Converters.fileContentsToBytesArray(ruleFile));
+			rs.setExcelFile(Converters.fileContentsToBytesArray(ruleFile));
 			
 		}
 		

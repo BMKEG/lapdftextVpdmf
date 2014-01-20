@@ -6,14 +6,14 @@
 	<version>1.1.5-SNAPSHOT</version>
 	<name>LA-PDFText VPDMf library</name>
 	<description>VPDMf extensions for the PDF files.</description>
-	
+
 	<parent>
-	    <groupId>edu.isi.bmkeg</groupId>
-	    <artifactId>bmkeg-parent</artifactId>
-	    <version>1.1.5-SNAPSHOT</version>
-	    <relativePath>../bmkeg-parent</relativePath>
- 	</parent>
-	
+		<groupId>edu.isi.bmkeg</groupId>
+		<artifactId>bmkeg-parent</artifactId>
+		<version>1.1.5-SNAPSHOT</version>
+		<relativePath>../bmkeg-parent</relativePath>
+	</parent>
+
 	<build>
 		<plugins>
 			<!-- NOTE: We don't need a groupId specification because the group is 
@@ -62,11 +62,12 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -100,7 +101,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
+
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -109,7 +110,7 @@
 		</license>
 	</licenses>
 
-	<scm/>
+	<scm />
 
 	<developers>
 		<developer>
@@ -118,7 +119,7 @@
 			<email>GullyBurns@gmail.com</email>
 		</developer>
 	</developers>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
@@ -132,22 +133,35 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
 			<artifactId>lapdftext</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
 			<artifactId>vpdmfCore</artifactId>
-		</dependency>		
+		</dependency>
 
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
 			<artifactId>ftd-jpa</artifactId>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>javax.jcr</groupId>
+			<artifactId>jcr</artifactId>
+			<version>2.0</version>
+		</dependency>
+
+		<!-- Jackrabbit content repository 
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-core</artifactId>
+			<version>2.2.4</version>
+		</dependency>-->
+
 	</dependencies>
 
 </project>

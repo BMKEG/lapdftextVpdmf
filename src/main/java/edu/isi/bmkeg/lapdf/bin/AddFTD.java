@@ -16,6 +16,7 @@ import edu.isi.bmkeg.ftd.model.qo.FTDRuleSet_qo;
 import edu.isi.bmkeg.lapdf.controller.LapdfMode;
 import edu.isi.bmkeg.lapdf.controller.LapdfVpdmfEngine;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
+import edu.isi.bmkeg.lapdf.pmcXml.PmcXmlArticle;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
 import edu.isi.bmkeg.utils.xml.XmlBindingTools;
@@ -94,22 +95,20 @@ public class AddFTD
 				
 				FTD ftd = new FTD();
 			
-				LapdfDocument doc = lapdfEng.blockifyPdfFile(f);
+				LapdfDocument doc = lapdfEng.blockifyFile(f);
 				lapdfEng.classifyDocument(doc, lapdfEng.getRuleFile());
-				
-				String basicText = lapdfEng.readCompleteText(doc);
 				
 				ftd.setChecksum( Converters.checksum(f) );
 				ftd.setName( f.getName() );
-				ftd.setText( basicText );
 				ftd.setRuleSet(rs);
-			
-				doc.packForSerialization();
-				ftd.setLapdf( Converters.objectToByteArray( doc ) );
-				doc.unpackFromSerialization();
-				
-				LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
+
+				PmcXmlArticle pmcXml = doc.convertToPmcXmlFormat();
 				StringWriter writer = new StringWriter();
+				XmlBindingTools.generateXML(pmcXml, writer);
+				ftd.setPmcXml( writer.toString() );
+	
+				LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
+				writer = new StringWriter();
 				XmlBindingTools.generateXML(xml, writer);
 				ftd.setXml( writer.toString() );
 				
@@ -121,7 +120,7 @@ public class AddFTD
 			
 		} else {
 					
-			LapdfDocument doc = lapdfEng.blockifyPdfFile(fOrD);
+			LapdfDocument doc = lapdfEng.blockifyFile(fOrD);
 			lapdfEng.classifyDocument(doc, lapdfEng.getRuleFile());
 			String text = lapdfEng.readCompleteText(doc);
 			
@@ -129,17 +128,17 @@ public class AddFTD
 
 			ftd.setChecksum( Converters.checksum(fOrD) );
 			ftd.setName( fOrD.getName() );
-			ftd.setText( text );
 			ftd.setRuleSet(rs);
-		
-			doc.packForSerialization();
-			ftd.setLapdf( Converters.objectToByteArray( doc ) );
-			doc.unpackFromSerialization();
-			
+					
 			lapdfEng.addSwfToFtd(fOrD, ftd);
 			
-			LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
+			PmcXmlArticle pmcXml = doc.convertToPmcXmlFormat();
 			StringWriter writer = new StringWriter();
+			XmlBindingTools.generateXML(pmcXml, writer);
+			ftd.setPmcXml( writer.toString() );
+			
+			LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
+			writer = new StringWriter();
 			XmlBindingTools.generateXML(xml, writer);
 			ftd.setXml( writer.toString() );
 
