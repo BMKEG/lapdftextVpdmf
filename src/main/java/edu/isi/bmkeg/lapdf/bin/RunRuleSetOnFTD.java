@@ -23,7 +23,7 @@ public class RunRuleSetOnFTD {
 
 	private static Logger logger = Logger.getLogger(RunRuleSetOnFTD.class);
 	
-	private static String USAGE = "usage: <ftdName> <ftdRuleSet> <dbName> <login> <password>";
+	private static String USAGE = "usage: <ftdName> <ftdRuleSet> <dbName> <login> <password> <workingDirectory>";
 
 	public static void main(String args[]) throws Exception	{
 
@@ -37,9 +37,10 @@ public class RunRuleSetOnFTD {
 		String dbName = args[2];
 		String login = args[3];
 		String password = args[4];
+		String workingDirectory = args[5];
  	
 		LapdfVpdmfEngine lapdfEng = new LapdfVpdmfEngine();		
-		lapdfEng.initializeVpdmfDao(login, password, dbName);
+		lapdfEng.initializeVpdmfDao(login, password, dbName, workingDirectory);
 				
 		FTDRuleSet_qo qrs = new FTDRuleSet_qo();
 		qrs.setFileName(ftdRuleSetName);

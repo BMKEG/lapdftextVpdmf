@@ -53,14 +53,14 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 	}	
 
 	@Override
-	public void init(String login, String password, String uri)
+	public void init(String login, String password, String uri, String workingDirectory)
 			throws Exception {
 		
 		if( coreDao == null ) {
 			this.coreDao = new CoreDaoImpl();
 		}
 		
-		this.coreDao.init(login, password, uri);
+		this.coreDao.init(login, password, uri, workingDirectory);
 		
 	}
 	
@@ -92,6 +92,9 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 	
 	public FTD runRuleSetOnFtd(FTD ftd, FTDRuleSet ftdRuleSet) throws Exception {
 		
+		/**
+		 *  TODO: NEED A MUCH CLEANER IMPLEMENTATION OF THIS 
+		 * 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Update the representation of the ruleset in the database.
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
@@ -102,23 +105,14 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Dump rulefile to disk on server
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		File tempDir = Files.createTempDir();
-		File ruleFile = new File( tempDir.getPath() + "/" 
+		String wdPth = this.getCoreDao().getWorkingDirectory();
+		File ruleDir = new File(wdPth + "/rules");
+		File ruleFile = new File( ruleDir.getPath() + "/" 
 				+ ftdRuleSet.getFileName());
 		String s = ftdRuleSet.getFileName();
 		ftdRuleSet.setRsName(s.substring(0,s.length()-4));
 		ftdRuleSet.setRsDescription("");
 		
-		if( s.endsWith(".drl") ) {			
-		
-			FileUtils.writeStringToFile(ruleFile, ftdRuleSet.getRuleBody());
-			
-		} else if( ftdRuleSet.getFileName().endsWith("csv") )  {
-
-			FileUtils.writeStringToFile(ruleFile, ftdRuleSet.getCsv());
-		
-		} 
-
 		if( l.size() == 1 ) {
 			
 			FTDRuleSet rsInDb = new FTDRuleSet();
@@ -203,7 +197,7 @@ public class LAPDFTextDaoImpl implements LAPDFTextDao {
 		}
 		
 		Converters.recursivelyDeleteFiles(tempDir);
-		
+		*/
 		return ftd;
 		
 	}

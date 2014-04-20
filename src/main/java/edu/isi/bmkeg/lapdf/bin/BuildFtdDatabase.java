@@ -11,7 +11,7 @@ import edu.isi.bmkeg.vpdmf.model.definitions.VPDMf;
 
 public class BuildFtdDatabase {
 
-	public static String USAGE = "arguments: <dbName> <login> <password>"; 
+	public static String USAGE = "arguments: <dbName> <login> <password> <workingDirectory>"; 
 
 	private static Logger logger = Logger.getLogger(BuildFtdDatabase.class);
 
@@ -19,7 +19,7 @@ public class BuildFtdDatabase {
 	
 	public static void main(String[] args) throws Exception {
 
-		if( args.length != 3 ) {
+		if( args.length != 4 ) {
 			System.err.println(USAGE);
 			System.exit(-1);
 		}
@@ -31,6 +31,7 @@ public class BuildFtdDatabase {
 		String dbName = args[0];
 		String login = args[1];
 		String password = args[2];
+		String workingDirectory = args[3];
 		
 		String[] newArgs = new String[] { 
 				buildFile.getPath(), args[0], args[1], args[2] 
@@ -41,7 +42,7 @@ public class BuildFtdDatabase {
 		logger.info("Digital Library Database " + args[0] + " successfully created.");
 
 		LapdfVpdmfEngine lapdfEng = new LapdfVpdmfEngine();
-		lapdfEng.initializeVpdmfDao(login, password, dbName);
+		lapdfEng.initializeVpdmfDao(login, password, dbName, workingDirectory);
 		
 		// need to upload the default rule file.
 		File f = lapdfEng.getRuleFile();

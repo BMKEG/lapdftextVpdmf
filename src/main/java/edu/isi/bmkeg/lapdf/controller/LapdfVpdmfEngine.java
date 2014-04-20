@@ -80,11 +80,11 @@ public class LapdfVpdmfEngine extends LapdfEngine implements VpdmfEngine  {
 	/**
 	 * Builds dao objects to input and output data to a VPDMf store.
 	 */
-	public void initializeVpdmfDao(String login, String password, String dbName) throws Exception {
+	public void initializeVpdmfDao(String login, String password, String dbName, String workingDirectory) throws Exception {
 
 		CoreDao coreDao = new CoreDaoImpl();
 		this.setFtdDao(new LAPDFTextDaoImpl(coreDao));
-		this.getFtdDao().init(login, password, dbName);
+		this.getFtdDao().init(login, password, dbName, workingDirectory);
 
 	}
 	
@@ -94,7 +94,7 @@ public class LapdfVpdmfEngine extends LapdfEngine implements VpdmfEngine  {
 		
 		if( swfBinDir != null ) {
 
-			String swfPath = swfBinDir + "/pdf2swf";
+			String swfPath = "pdf2swf";
 			if( System.getProperty("os.name").toLowerCase().contains("win") ) {
 				swfPath += ".exe";
 			}
@@ -132,11 +132,18 @@ public class LapdfVpdmfEngine extends LapdfEngine implements VpdmfEngine  {
 	        logger.debug(out);
 	        
 			if( !swfFile.exists() ) {
-				return;
+				throw new Exception("Could not generate SWF file");
 			}
 			
-			ftd.setLaswf( Converters.fileContentsToBytesArray(swfFile) );
+			String swfPth = swfFile.getPath();
+			String wd = this.getFtdDao().getCoreDao().getWorkingDirectory();
+			swfPth = swfPth.substring(wd.length());
+			ftd.setLaswfFile( swfPth );
 			
+		} else {
+			
+			throw new Exception("Could not find pdf2swf on system");
+		
 		}
 		
 	}
@@ -147,23 +154,26 @@ public class LapdfVpdmfEngine extends LapdfEngine implements VpdmfEngine  {
 
 	public FTDRuleSet buildDrlRuleSet(String name, String description, File ruleFile) throws Exception {
 	
+		String wdPth = this.getFtdDao().getCoreDao().getWorkingDirectory();
+		File ruleDir = new File(wdPth + "/rules");
+		if( !ruleDir.exists() ) {
+			ruleDir.mkdirs();
+		}
+		
 		FTDRuleSet rs = new FTDRuleSet();
 		rs.setRsName(name);
 		rs.setRsDescription(description);
 		rs.setFileName(ruleFile.getName());
 		
-		if( ruleFile.getName().endsWith(".drl") ) {
-			
-			rs.setRuleBody( TextUtils.readFileToString(ruleFile) );
-		
-		} else if( ruleFile.getName().endsWith(".csv") ) {
-		
-			rs.setCsv(FileUtils.readFileToString(ruleFile));
-			
-		} else if( ruleFile.getName().endsWith(".xls") ) {
-		
-			rs.setExcelFile(Converters.fileContentsToBytesArray(ruleFile));
-			
+		rs.setFilePath("rules/" + ruleFile.getName());
+		FileUtils.copyFileToDirectory(ruleFile, ruleDir);
+
+		if (ruleFile.getName().endsWith(".drl")) {
+			rs.setFileType("drl");
+		} else if (ruleFile.getName().endsWith(".csv")) {
+			rs.setFileType("csv");
+		} else if (ruleFile.getName().endsWith(".xls")) {
+			rs.setFileType("xls");
 		}
 		
 		return rs;

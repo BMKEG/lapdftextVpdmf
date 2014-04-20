@@ -16,7 +16,7 @@ public interface LAPDFTextDao {
 
 	public CoreDao getCoreDao();
 	
-	public void init(String login, String password, String uri) throws Exception;
+	public void init(String login, String password, String uri, String workingDirectory) throws Exception;
 	
 	void insertLapdfDocument(LapdfDocument doc, File pdf, String text)
 			throws Exception;

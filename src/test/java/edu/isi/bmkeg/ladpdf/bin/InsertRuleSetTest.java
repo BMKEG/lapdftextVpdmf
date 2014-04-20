@@ -16,7 +16,7 @@ public class InsertRuleSetTest extends VPDMfTestCase
 {
 
 	BmkegProperties prop;
-	String login, password, dbUrl;
+	String login, password, dbUrl, workingDirectory;
 
 	File inputFile, outputFile, ruleFile;
 	File f1, f2, f3;
@@ -30,6 +30,7 @@ public class InsertRuleSetTest extends VPDMfTestCase
 		login = prop.getDbUser();
 		password = prop.getDbPassword();
 		dbUrl = prop.getDbUrl();
+		workingDirectory = prop.getWorkingDirectory();
 
 		int l = dbUrl.lastIndexOf("/");
 		if (l != -1)
@@ -39,7 +40,7 @@ public class InsertRuleSetTest extends VPDMfTestCase
 		inputFile = new File( u.getPath() );
 				
 		ruleFile = Converters
-		.extractFileFromJarClasspath("rules/general.xls");
+		.extractFileFromJarClasspath(".", "rules/general.xls");
 		u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/pbio.1000441.pdf");
 		f1 = new File(u.getPath());	
 		
@@ -55,7 +56,7 @@ public class InsertRuleSetTest extends VPDMfTestCase
 	{
 		
 		LapdfVpdmfEngine lapdfEng = new LapdfVpdmfEngine();
-		lapdfEng.initializeVpdmfDao(login, password, dbUrl);
+		lapdfEng.initializeVpdmfDao(login, password, dbUrl, workingDirectory);
 		
 		FTDRuleSet rs = lapdfEng.buildDrlRuleSet("General","Insert Notes Here", ruleFile);
 		

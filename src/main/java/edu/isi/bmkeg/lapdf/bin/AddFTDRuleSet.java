@@ -12,11 +12,11 @@ public class AddFTDRuleSet
 
 	private static Logger logger = Logger.getLogger(AddFTDRuleSet.class);
 	
-	private static String USAGE = "usage: <path-to-rule-file> <dbName> <login> <password> ";
+	private static String USAGE = "usage: <path-to-rule-file> <dbName> <login> <password> <workingDirectory>";
 
 	public static void main(String args[]) throws Exception	{
 
-		if (args.length != 4  ) {
+		if (args.length != 5  ) {
 			System.err.println(USAGE);
 			System.exit(1);
 		}
@@ -24,9 +24,10 @@ public class AddFTDRuleSet
 		String ruleFileLocation = args[0];
 		String name = ruleFileLocation;
 		String desc = "";
-		String dbName = args[3];
-		String login = args[4];
-		String password = args[5];
+		String dbName = args[1];
+		String login = args[2];
+		String password = args[3];
+		String workingDirectory = args[4];
  	
 		LapdfVpdmfEngine lapdfEng = null;
 		if (ruleFileLocation != null) {
@@ -36,7 +37,7 @@ public class AddFTDRuleSet
 			lapdfEng = new LapdfVpdmfEngine();
 		}
 		
-		lapdfEng.initializeVpdmfDao(login, password, dbName);
+		lapdfEng.initializeVpdmfDao(login, password, dbName, workingDirectory);
 		
 		FTDRuleSet rs = lapdfEng.buildDrlRuleSet(name, desc, new File(ruleFileLocation));
 				

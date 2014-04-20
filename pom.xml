@@ -31,7 +31,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>edu.isi.bmkeg</groupId>
-									<artifactId>ftd</artifactId>
+									<artifactId>vpdmf-ftd</artifactId>
 									<type>zip</type>
 									<classifier>mysql</classifier>
 									<outputDirectory>${project.build.directory}/vpdmf/edu/isi/bmkeg/lapdf</outputDirectory>
@@ -123,7 +123,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
-			<artifactId>ftd</artifactId>
+			<artifactId>vpdmf-ftd</artifactId>
 			<type>zip</type>
 			<classifier>mysql</classifier>
 			<exclusions>
@@ -146,7 +146,7 @@
 
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
-			<artifactId>ftd-jpa</artifactId>
+			<artifactId>vpdmf-ftd-jpa</artifactId>
 		</dependency>
 
 		<dependency>

@@ -1,6 +1,7 @@
 package edu.isi.bmkeg.lapdf.bin;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +14,6 @@ import org.apache.log4j.Logger;
 import edu.isi.bmkeg.ftd.model.FTD;
 import edu.isi.bmkeg.ftd.model.FTDRuleSet;
 import edu.isi.bmkeg.ftd.model.qo.FTDRuleSet_qo;
-import edu.isi.bmkeg.lapdf.controller.LapdfMode;
 import edu.isi.bmkeg.lapdf.controller.LapdfVpdmfEngine;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.lapdf.pmcXml.PmcXmlArticle;
@@ -27,7 +27,7 @@ public class AddFTD
 
 	private static Logger logger = Logger.getLogger(AddFTD.class);
 	
-	private static String USAGE = "usage: <input-file/dir> <dbName> <login> <password> [<rule-file>]";
+	private static String USAGE = "usage: <input-file/dir> <dbName> <login> <password> <workingDirectory> [<rule-file>]";
 
 	public static void main(String args[]) throws Exception	{
 
@@ -40,10 +40,11 @@ public class AddFTD
 		String dbName = args[1];
 		String login = args[2];
 		String password = args[3];
+		String workingDirectory = args[4];
 		String ruleFileLocation = null;
 		
-		if (args.length == 5) 
-			ruleFileLocation = args[4];
+		if (args.length == 6) 
+			ruleFileLocation = args[5];
  	
 		LapdfVpdmfEngine lapdfEng = null;
 		if (ruleFileLocation != null) {
@@ -53,7 +54,7 @@ public class AddFTD
 			lapdfEng = new LapdfVpdmfEngine();
 		}
 		
-		lapdfEng.initializeVpdmfDao(login, password, dbName);
+		lapdfEng.initializeVpdmfDao(login, password, dbName, workingDirectory);
 		
 		File fOrD = new File( inputFileOrFolderPath );
 		if( !fOrD.exists() ) { 
@@ -99,21 +100,23 @@ public class AddFTD
 				lapdfEng.classifyDocument(doc, lapdfEng.getRuleFile());
 				
 				ftd.setChecksum( Converters.checksum(f) );
+				
 				ftd.setName( f.getName() );
 				ftd.setRuleSet(rs);
 
 				PmcXmlArticle pmcXml = doc.convertToPmcXmlFormat();
-				StringWriter writer = new StringWriter();
+				String pmcName = fName.substring(0,fName.length()-4) + "_pmc.xml";
+				File pmcFile = new File( workingDirectory + "/" + pmcName );
+				FileWriter writer = new FileWriter(pmcFile);
 				XmlBindingTools.generateXML(pmcXml, writer);
-				ftd.setPmcXml( writer.toString() );
+				ftd.setPmcXmlFile( pmcName );
 	
 				LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
-				writer = new StringWriter();
+				String lapdfName = fName.substring(0,fName.length()-4) + "_lapdf.xml";
+				File lapdfFile = new File( workingDirectory + "/" + lapdfName );
+				writer = new FileWriter(lapdfFile);
 				XmlBindingTools.generateXML(xml, writer);
-				ftd.setXml( writer.toString() );
-				
-				lapdfEng.addSwfToFtd(f, ftd);
-				
+				ftd.setXmlFile( lapdfName );
 				lapdfEng.getFtdDao().getCoreDao().insert(ftd, "FTD");
 												
 			}
@@ -133,15 +136,17 @@ public class AddFTD
 			lapdfEng.addSwfToFtd(fOrD, ftd);
 			
 			PmcXmlArticle pmcXml = doc.convertToPmcXmlFormat();
-			StringWriter writer = new StringWriter();
+			String pmcName = fOrD.getName().substring(0,fOrD.getName().length()-4) + "_pmc.xml";
+			File pmcFile = new File( workingDirectory + "/" + pmcName );
+			FileWriter writer = new FileWriter(pmcFile);
 			XmlBindingTools.generateXML(pmcXml, writer);
-			ftd.setPmcXml( writer.toString() );
-			
-			LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
-			writer = new StringWriter();
-			XmlBindingTools.generateXML(xml, writer);
-			ftd.setXml( writer.toString() );
+			ftd.setPmcXmlFile( pmcName );
 
+			LapdftextXMLDocument xml = doc.convertToLapdftextXmlFormat();
+			String lapdfName = fOrD.getName().substring(0,fOrD.getName().length()-4) + "_lapdf.xml";
+			File lapdfFile = new File( workingDirectory + "/" + lapdfName );
+			writer = new FileWriter(lapdfFile);
+			XmlBindingTools.generateXML(xml, writer);
 			
 			lapdfEng.getFtdDao().getCoreDao().insert(ftd, "FTD");
 			

@@ -16,7 +16,7 @@ public class QueryFtdDataTest extends VPDMfTestCase
 {
 
 	BmkegProperties prop;
-	String login, password, dbUrl;
+	String login, password, dbUrl, workingDirectory;
 
 	File inputFile, outputFile, ruleFile;
 	File f1, f2, f3;
@@ -32,6 +32,7 @@ public class QueryFtdDataTest extends VPDMfTestCase
 		login = prop.getDbUser();
 		password = prop.getDbPassword();
 		dbUrl = prop.getDbUrl();
+		workingDirectory = prop.getWorkingDirectory();
 
 		int l = dbUrl.lastIndexOf("/");
 		if (l != -1)
@@ -49,7 +50,7 @@ public class QueryFtdDataTest extends VPDMfTestCase
 		f1 = new File(u.getPath());	
 		
 		lapdfEng = new LapdfVpdmfEngine();
-		lapdfEng.initializeVpdmfDao(login, password, dbUrl);
+		lapdfEng.initializeVpdmfDao(login, password, dbUrl, workingDirectory);
 		
 		FTDRuleSet rs = lapdfEng.buildDrlRuleSet("General","Insert Notes Here", ruleFile);
 		
